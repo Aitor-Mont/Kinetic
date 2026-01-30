@@ -1,0 +1,8 @@
+/* Dashboard specific styles */
+.navbar-item-active {
+    @apply bg-kinetic-500/10 text-kinetic-400 border-kinetic-500/30 border;
+}
+
+.logo-bg-active {
+    @apply from-kinetic-500/20 to-kinetic-600/20;
+}

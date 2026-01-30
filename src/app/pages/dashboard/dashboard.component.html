@@ -1,0 +1,282 @@
+<div class="min-h-screen bg-dark-950 flex transition-all duration-300">
+    <!-- Sidebar -->
+    <aside
+        class="bg-dark-900 shadow-2xl border-r border-dark-700/50 flex flex-col transition-all duration-300 overflow-hidden"
+        [class.w-72]="!sidebarCollapsed()" [class.w-20]="sidebarCollapsed()">
+
+        <!-- Logo -->
+        <div class="p-6 border-b border-dark-700/50">
+            <div class="flex items-center gap-4 transition-all duration-300"
+                [class.justify-center]="sidebarCollapsed()">
+                <div class="flex-shrink-0">
+                    <img src="/images/logo.png" alt="Kinetic" [class.h-8]="!sidebarCollapsed()"
+                        [class.h-6]="sidebarCollapsed()" class="w-auto object-contain transition-all duration-300">
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="flex-1 p-4 space-y-2 overflow-y-auto custom-scrollbar">
+            @if (!sidebarCollapsed()) {
+            <p class="text-dark-500 text-xs font-semibold uppercase tracking-widest px-3 mb-4 animate-fade-in">Proyectos
+            </p>
+            }
+
+            @for (project of projects(); track project.id) {
+            <button (click)="selectProject(project)"
+                class="w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-200 group relative"
+                [class.navbar-item-active]="selectedProject()?.id === project.id"
+                [class.text-dark-300]="selectedProject()?.id !== project.id">
+
+                <div class="w-8 h-8 rounded-lg bg-dark-700 flex items-center justify-center flex-shrink-0 transition-colors"
+                    [class.logo-bg-active]="selectedProject()?.id === project.id">
+                    <span class="text-sm font-bold">{{ project.name.charAt(0) }}</span>
+                </div>
+
+                @if (!sidebarCollapsed()) {
+                <div class="text-left min-w-0 animate-fade-in whitespace-nowrap">
+                    <p class="font-semibold truncate text-sm">{{ project.name }}</p>
+                    <p class="text-xs text-dark-500 truncate">{{ project.description }}</p>
+                </div>
+                }
+
+                <!-- Active indicator -->
+                @if (selectedProject()?.id === project.id && !sidebarCollapsed()) {
+                <div class="absolute right-2 w-1.5 h-1.5 rounded-full bg-kinetic-500 animate-pulse"></div>
+                }
+            </button>
+            }
+
+            @if (!sidebarCollapsed()) {
+            <button
+                class="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-dark-400 hover:text-kinetic-400 hover:bg-dark-800 transition-all duration-200 mt-6 border border-dashed border-dark-600/50 group">
+                <div
+                    class="w-8 h-8 rounded-lg bg-dark-800 flex items-center justify-center group-hover:bg-kinetic-500/10 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
+                </div>
+                <span class="text-sm font-medium">Nuevo Proyecto</span>
+            </button>
+            }
+        </nav>
+
+        <!-- User Section -->
+        <div class="p-4 border-t border-dark-700/50 bg-dark-900/50">
+            <div class="flex items-center gap-3">
+                <div
+                    class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center flex-shrink-0 shadow-lg shadow-indigo-500/20">
+                    <span class="text-white font-bold text-sm">JD</span>
+                </div>
+                @if (!sidebarCollapsed()) {
+                <div class="flex-1 min-w-0 animate-fade-in">
+                    <p class="text-white text-sm font-bold truncate">Juan Demo</p>
+                    <p class="text-dark-500 text-xs truncate">demo-user.kinetic.dev</p>
+                </div>
+                <button (click)="logout()"
+                    class="p-2 text-dark-500 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-all">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                </button>
+                }
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col min-h-screen overflow-hidden">
+        <!-- Header -->
+        <header
+            class="h-16 bg-dark-950/50 backdrop-blur-md border-b border-dark-700/50 flex items-center justify-between px-8 sticky top-0 z-20">
+            <div class="flex items-center gap-6">
+                <button (click)="toggleSidebar()"
+                    class="p-2 text-dark-400 hover:text-white hover:bg-dark-700/50 rounded-lg transition-all">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+
+                @if (selectedProject()) {
+                <div class="animate-fade-in">
+                    <h2 class="text-lg font-bold text-white leading-tight">{{ selectedProject()?.name }}</h2>
+                    <div class="flex items-center gap-2 text-xs text-dark-500">
+                        <span
+                            class="px-1.5 py-0.5 bg-dark-700 rounded text-dark-300 uppercase tracking-tighter">Activo</span>
+                        <span>•</span>
+                        <span>{{ selectedProject()?.description }}</span>
+                    </div>
+                </div>
+                }
+            </div>
+
+            <div class="flex items-center gap-3">
+                <button
+                    class="flex items-center gap-2 px-4 py-2 bg-dark-800 hover:bg-dark-700 text-dark-300 hover:text-white rounded-lg border border-dark-700/50 transition-all text-sm font-medium">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    Buscar
+                </button>
+                <div class="w-px h-6 bg-dark-700/50 mx-1"></div>
+                <button class="btn-primary !py-2 !px-5 text-sm">
+                    <span class="flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                        </svg>
+                        Nuevo Tablero
+                    </span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Content Area -->
+        <div class="flex-1 p-8 overflow-y-auto custom-scrollbar">
+            @if (selectedProject()) {
+            <div class="max-w-7xl mx-auto space-y-10 animate-fade-in">
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="glass-card-dark p-6 group hover:border-kinetic-500/30 transition-all cursor-default">
+                        <div class="flex items-center justify-between mb-4">
+                            <div
+                                class="w-12 h-12 rounded-xl bg-kinetic-500/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <svg class="w-6 h-6 text-kinetic-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                </svg>
+                            </div>
+                            <span class="text-xs font-bold text-emerald-400">+12%</span>
+                        </div>
+                        <h3 class="text-3xl font-black text-white mb-1">24</h3>
+                        <p class="text-dark-400 text-sm font-medium">Tareas Activas</p>
+                    </div>
+
+                    <div class="glass-card-dark p-6 group hover:border-accent-500/30 transition-all cursor-default">
+                        <div class="flex items-center justify-between mb-4">
+                            <div
+                                class="w-12 h-12 rounded-xl bg-accent-500/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <svg class="w-6 h-6 text-accent-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                            <span class="text-xs font-bold text-emerald-400">85%</span>
+                        </div>
+                        <h3 class="text-3xl font-black text-white mb-1">12</h3>
+                        <p class="text-dark-400 text-sm font-medium">Completadas</p>
+                    </div>
+
+                    <div class="glass-card-dark p-6 group hover:border-amber-500/30 transition-all cursor-default">
+                        <div class="flex items-center justify-between mb-4">
+                            <div
+                                class="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <svg class="w-6 h-6 text-amber-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                            <span class="text-xs font-bold text-amber-400">3 días</span>
+                        </div>
+                        <h3 class="text-3xl font-black text-white mb-1">5</h3>
+                        <p class="text-dark-400 text-sm font-medium">Por Vencer</p>
+                    </div>
+
+                    <div class="glass-card-dark p-6 group hover:border-indigo-500/30 transition-all cursor-default">
+                        <div class="flex items-center justify-between mb-4">
+                            <div
+                                class="w-12 h-12 rounded-xl bg-indigo-500/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <svg class="w-6 h-6 text-indigo-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                </svg>
+                            </div>
+                            <span class="text-xs font-bold text-dark-400">8</span>
+                        </div>
+                        <h3 class="text-3xl font-black text-white mb-1">Activos</h3>
+                        <p class="text-dark-400 text-sm font-medium">Miembros del equipo</p>
+                    </div>
+                </div>
+
+                <!-- Tableros Section -->
+                <div class="space-y-6">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-2xl font-black text-white">Tableros</h3>
+                        <button
+                            class="text-sm font-bold text-kinetic-400 hover:text-kinetic-300 transition-colors">Gestionar</button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        @for (board of getProjectBoards(); track board.id) {
+                        <button (click)="openBoard(board)"
+                            class="glass-card-dark p-8 text-left hover:border-kinetic-500/50 transition-all group relative overflow-hidden">
+                            <div class="flex items-center justify-between mb-8">
+                                <div
+                                    class="w-14 h-14 rounded-2xl bg-dark-700 flex items-center justify-center border border-dark-600/50 group-hover:scale-110 transition-all">
+                                    <svg class="w-7 h-7 text-kinetic-400" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
+                                    </svg>
+                                </div>
+                                <div class="text-dark-500 group-hover:text-white transition-colors">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 5l7 7-7 7" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <h4
+                                class="text-xl font-bold text-white mb-2 group-hover:text-kinetic-400 transition-colors">
+                                {{ board.name }}</h4>
+                            <p class="text-dark-500 text-sm font-medium">12 tareas activas • 5 miembros</p>
+                        </button>
+                        }
+
+                        <!-- New Board -->
+                        <button
+                            class="glass-card-dark p-8 border-2 border-dashed border-dark-700 flex flex-col items-center justify-center min-h-[200px] group hover:border-kinetic-500/50 transition-all">
+                            <div
+                                class="w-14 h-14 rounded-full bg-dark-800 flex items-center justify-center mb-4 group-hover:bg-kinetic-500/10 transition-all">
+                                <svg class="w-8 h-8 text-dark-500 group-hover:text-kinetic-400 transition-colors"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                </svg>
+                            </div>
+                            <span
+                                class="text-sm font-bold text-dark-500 group-hover:text-white uppercase tracking-widest transition-colors">Crear
+                                Tablero</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            } @else {
+            <div class="flex items-center justify-center h-[70vh] animate-fade-in">
+                <div class="text-center max-w-sm">
+                    <div
+                        class="w-24 h-24 bg-dark-800 rounded-3xl flex items-center justify-center mx-auto mb-8 border border-dark-700 shadow-2xl relative">
+                        <div class="absolute inset-0 bg-kinetic-500/10 rounded-3xl blur-xl"></div>
+                        <svg class="w-12 h-12 text-dark-600 relative" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+                        </svg>
+                    </div>
+                    <h2 class="text-2xl font-black text-white mb-3">Empieza aquí</h2>
+                    <p class="text-dark-400 text-sm leading-relaxed">Selecciona un proyecto del menú lateral para
+                        visualizar sus tableros y gestionar tus tareas.</p>
+                </div>
+            </div>
+            }
+        </div>
+    </main>
+</div>

@@ -1,0 +1,270 @@
+<!-- Landing Page with Full Background and Task Column Auth Modal -->
+<div class="min-h-screen relative overflow-hidden">
+  <!-- Background with Image and overlay -->
+  <div class="absolute inset-0 z-0">
+    <div class="absolute inset-0 bg-cover bg-center bg-no-repeat"
+      style="background-image: url('/images/landing-bg.png');">
+    </div>
+    <!-- Dark overlay to ensure text readability -->
+    <div class="absolute inset-0 bg-dark-950/80 backdrop-blur-[2px]"></div>
+
+    <!-- Animated background elements (refined) -->
+    <div class="absolute top-20 left-10 w-72 h-72 bg-kinetic-500/10 rounded-full blur-3xl animate-float"></div>
+    <div class="absolute bottom-20 right-10 w-96 h-96 bg-accent-500/5 rounded-full blur-3xl animate-float"
+      style="animation-delay: -3s;"></div>
+
+    <!-- Grid pattern overlay -->
+    <div class="absolute inset-0 opacity-10" style="background-image: linear-gradient(rgba(14, 165, 233, 0.1) 1px, transparent 1px),
+                                  linear-gradient(90deg, rgba(14, 165, 233, 0.1) 1px, transparent 1px);
+                background-size: 60px 60px;">
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="relative z-10 flex items-center justify-between px-8 py-6 max-w-7xl mx-auto">
+    <div class="flex items-center gap-4">
+      <img src="/images/logo.png" alt="Kinetic Logo" class="h-10 w-auto object-contain">
+    </div>
+
+    <div class="flex items-center gap-4">
+      <button (click)="openAuth('login')" class="btn-secondary text-sm">
+        Iniciar Sesión
+      </button>
+      <button (click)="openAuth('register')" class="btn-primary text-sm">
+        Comenzar Gratis
+      </button>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <main class="relative z-10 max-w-7xl mx-auto px-8 pt-20 pb-32">
+    <div class="text-center max-w-4xl mx-auto">
+      <div
+        class="inline-flex items-center gap-2 px-4 py-2 bg-kinetic-500/10 border border-kinetic-500/30 rounded-full text-kinetic-400 text-sm mb-8 animate-fade-in">
+        <span class="w-2 h-2 bg-kinetic-400 rounded-full animate-pulse"></span>
+        Sistema de Gestión de Proyectos Empresarial
+      </div>
+
+      <h1 class="text-5xl md:text-7xl font-bold mb-6 animate-slide-up">
+        <span class="text-white">Gestiona tus proyectos</span>
+        <br />
+        <span class="kinetic-text-gradient">con energía Kinetic</span>
+      </h1>
+
+      <p class="text-xl text-dark-300 mb-12 max-w-2xl mx-auto animate-slide-up" style="animation-delay: 0.1s;">
+        Tableros Kanban personalizables, gestión de sprints, asignación automática de recursos
+        y análisis predictivo para equipos que quieren moverse rápido.
+      </p>
+
+      <div class="flex flex-wrap justify-center gap-4 animate-slide-up" style="animation-delay: 0.2s;">
+        <button (click)="openAuth('register')" class="btn-primary text-lg px-8 py-4">
+          <span class="flex items-center gap-2">
+            Empezar Ahora
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+            </svg>
+          </span>
+        </button>
+        <button class="btn-secondary text-lg px-8 py-4">
+          Ver Demo
+        </button>
+      </div>
+    </div>
+
+    <!-- Features Grid -->
+    <div class="grid md:grid-cols-3 gap-6 mt-24">
+      <div class="glass-card-dark p-8 animate-slide-up" style="animation-delay: 0.3s;">
+        <div
+          class="w-14 h-14 bg-gradient-to-br from-kinetic-500/20 to-kinetic-600/20 rounded-2xl flex items-center justify-center mb-6 border border-kinetic-500/30">
+          <svg class="w-7 h-7 text-kinetic-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold text-white mb-3">Tableros Kanban</h3>
+        <p class="text-dark-400">Arrastra y suelta tareas entre columnas personalizables. Visualiza el progreso de tu
+          equipo en tiempo real.</p>
+      </div>
+
+      <div class="glass-card-dark p-8 animate-slide-up" style="animation-delay: 0.4s;">
+        <div
+          class="w-14 h-14 bg-gradient-to-br from-accent-500/20 to-accent-600/20 rounded-2xl flex items-center justify-center mb-6 border border-accent-500/30">
+          <svg class="w-7 h-7 text-accent-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold text-white mb-3">Gestión de Equipos</h3>
+        <p class="text-dark-400">Asignación automática basada en disponibilidad y carga de trabajo. Optimiza la
+          productividad de tu equipo.</p>
+      </div>
+
+      <div class="glass-card-dark p-8 animate-slide-up" style="animation-delay: 0.5s;">
+        <div
+          class="w-14 h-14 bg-gradient-to-br from-emerald-500/20 to-emerald-600/20 rounded-2xl flex items-center justify-center mb-6 border border-emerald-500/30">
+          <svg class="w-7 h-7 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold text-white mb-3">Análisis Predictivo</h3>
+        <p class="text-dark-400">Estima tiempos de finalización y detecta cuellos de botella antes de que impacten en
+          los plazos.</p>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Auth Modal - Task Column Style -->
+@if (showAuthModal()) {
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4" (click)="closeAuth()">
+  <!-- Backdrop -->
+  <div class="absolute inset-0 bg-dark-950/80 backdrop-blur-sm animate-fade-in"></div>
+
+  <!-- Modal - Styled like a Kanban Column -->
+  <div class="relative w-full max-w-[380px] animate-slide-up" (click)="$event.stopPropagation()">
+
+    <!-- Column Header -->
+    <div class="bg-gradient-to-r from-kinetic-600 to-kinetic-700 rounded-t-2xl px-6 py-4 flex items-center gap-3">
+      <div class="w-3 h-3 rounded-full bg-white/30"></div>
+      <h2 class="text-lg font-semibold text-white">
+        {{ isForgotPassword() ? 'Recuperar Cuenta' : (isLogin() ? 'Iniciar Sesión' : 'Crear Cuenta') }}
+      </h2>
+      <button (click)="closeAuth()"
+        class="ml-auto w-8 h-8 flex items-center justify-center text-white/60 hover:text-white hover:bg-white/10 rounded-lg transition-all">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Column Body - Cards are form fields -->
+    <div class="bg-dark-800/95 backdrop-blur-xl border-x border-b border-dark-600/50 rounded-b-2xl p-6 space-y-4">
+      @if (!isForgotPassword()) {
+
+      <!-- Welcome Card -->
+      <div class="task-card !cursor-default !hover:translate-y-0 mb-6">
+        <div class="flex items-center gap-4 mb-3">
+          <div class="p-1 px-2 bg-dark-900/50 rounded-lg border border-dark-600/30">
+            <img src="/images/logo.png" alt="Logo" class="h-8 w-auto">
+          </div>
+          <div>
+            <p class="text-white font-medium">Panel de Control</p>
+            <p class="text-dark-400 text-sm">{{ isLogin() ? 'Accede a tu cuenta' : 'Únete al equipo' }}</p>
+          </div>
+        </div>
+      </div>
+
+      <form (ngSubmit)="onSubmit()" class="space-y-4">
+        <!-- Name Field (Register only) -->
+        @if (!isLogin()) {
+        <div class="task-card !cursor-default !hover:translate-y-0 !p-3">
+          <label class="block text-dark-400 text-xs font-medium mb-1.5 uppercase tracking-wide">Nombre Completo</label>
+          <input type="text" [(ngModel)]="fullName" name="fullName" placeholder="Tu nombre"
+            class="input-field !py-2.5 !text-sm" required>
+        </div>
+        }
+
+        <!-- Email Field -->
+        <div class="task-card !cursor-default !hover:translate-y-0 !p-3">
+          <label class="block text-dark-400 text-xs font-medium mb-1.5 uppercase tracking-wide">Email</label>
+          <input type="email" [(ngModel)]="email" name="email" placeholder="tu@email.com"
+            class="input-field !py-2.5 !text-sm" required>
+        </div>
+
+        <!-- Password Field -->
+        <div class="task-card !cursor-default !hover:translate-y-0 !p-3">
+          <div class="flex items-center justify-between mb-1.5">
+            <label class="block text-dark-400 text-xs font-medium uppercase tracking-wide">Contraseña</label>
+            @if (isLogin()) {
+            <button type="button" (click)="showForgot()"
+              class="text-[10px] text-kinetic-400 hover:text-kinetic-300 transition-colors uppercase font-bold tracking-tight">
+              ¿Olvidaste la contraseña?
+            </button>
+            }
+          </div>
+          <input type="password" [(ngModel)]="password" name="password" placeholder="••••••••"
+            class="input-field !py-2.5 !text-sm" required>
+        </div>
+
+        <!-- Confirm Password (Register only) -->
+        @if (!isLogin()) {
+        <div class="task-card !cursor-default !hover:translate-y-0 !p-3">
+          <label class="block text-dark-400 text-xs font-medium mb-1.5 uppercase tracking-wide">Confirmar
+            Contraseña</label>
+          <input type="password" [(ngModel)]="confirmPassword" name="confirmPassword" placeholder="••••••••"
+            class="input-field !py-2.5 !text-sm" required>
+        </div>
+        }
+
+        <!-- Submit Button -->
+        <button type="submit" class="w-full btn-primary !py-3.5 flex items-center justify-center gap-2"
+          [disabled]="isLoading()">
+          @if (isLoading()) {
+          <svg class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+            </path>
+          </svg>
+          <span>Procesando...</span>
+          } @else {
+          <span>{{ isLogin() ? 'Iniciar Sesión' : 'Crear Cuenta' }}</span>
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+          </svg>
+          }
+        </button>
+      </form>
+
+      <!-- Toggle Mode -->
+      <div class="text-center pt-2">
+        <p class="text-dark-400 text-sm">
+          {{ isLogin() ? '¿No tienes cuenta?' : '¿Ya tienes cuenta?' }}
+          <button (click)="toggleMode()"
+            class="text-kinetic-400 hover:text-kinetic-300 font-medium ml-1 transition-colors">
+            {{ isLogin() ? 'Regístrate' : 'Inicia sesión' }}
+          </button>
+        </p>
+      </div>
+      } @else {
+      <!-- Forgot Password View -->
+      <div class="task-card !cursor-default !hover:translate-y-0 mb-6 border-l-4 border-l-kinetic-500">
+        <p class="text-white font-medium mb-1">Restablecer Contraseña</p>
+        <p class="text-dark-400 text-sm italic">Introduce tu email y te enviaremos las instrucciones.</p>
+      </div>
+
+      <form (ngSubmit)="onResetPassword()" class="space-y-4">
+        <div class="task-card !cursor-default !hover:translate-y-0 !p-3">
+          <label class="block text-dark-400 text-xs font-medium mb-1.5 uppercase tracking-wide">Dirección de
+            Email</label>
+          <input type="email" [(ngModel)]="resetEmail" name="resetEmail" placeholder="tu@email.com"
+            class="input-field !py-2.5 !text-sm" required>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 pt-2">
+          <button type="button" (click)="cancelForgot()" class="btn-secondary !py-3 text-sm !px-4">
+            Cancelar
+          </button>
+          <button type="submit" class="btn-primary !py-3 text-sm !px-4" [disabled]="isLoading()">
+            @if (isLoading()) {
+            <span class="flex items-center gap-2">
+              <svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                </path>
+              </svg>
+              Enviando...
+            </span>
+            } @else {
+            Enviar
+            }
+          </button>
+        </div>
+      </form>
+      }
+    </div>
+  </div>
+</div>
+}

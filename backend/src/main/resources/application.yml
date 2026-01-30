@@ -1,0 +1,36 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:postgresql://db.bympjunlxycrrhkiqaci.supabase.co:5432/postgres?sslmode=require
+    username: postgres
+    password: Atapuerca_1976
+    driver-class-name: org.postgresql.Driver
+  
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+
+# Supabase Configuration
+supabase:
+  url: https://bympjunlxycrrhkiqaci.supabase.co
+  key: sb_publishable_yx4BvBulpqnz983eCSR-0Q_HYHNX88j
+
+# JWT Configuration  
+jwt:
+  secret: kinetic-jwt-secret-key-change-in-production-2024
+  expiration: 86400000
+
+# CORS Configuration
+cors:
+  allowed-origins: http://localhost:4200

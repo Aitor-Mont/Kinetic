@@ -1,0 +1,22 @@
+# Kinetic - Corporate Task Manager
+
+- [ ] Project Initialization <!-- id: 0 -->
+    - [ ] Create project directory structure <!-- id: 1 -->
+    - [ ] Initialize Angular Frontend (`frontend`) <!-- id: 2 -->
+    - [ ] Initialize Spring Boot Backend (`backend`) <!-- id: 3 -->
+- [ ] Database Setup (Supabase) <!-- id: 4 -->
+    - [ ] Design Database Schema (Users, Workspaces, Projects, Boards, Columns, Tasks) <!-- id: 5 -->
+    - [ ] Apply Schema Migrations via Supabase MCP <!-- id: 6 -->
+- [ ] Backend Implementation (Spring Boot) <!-- id: 7 -->
+    - [ ] Configure Supabase/PostgreSQL connection <!-- id: 8 -->
+    - [ ] Implement Authentication (JWT/Supabase Auth) <!-- id: 9 -->
+    - [ ] Implement Project & Board APIs <!-- id: 10 -->
+    - [ ] Implement Task APIs (CRUD, Status updates) <!-- id: 11 -->
+- [ ] Frontend Implementation (Angular) <!-- id: 12 -->
+    - [ ] Setup TailwindCSS & Design System <!-- id: 13 -->
+    - [ ] Implement Landing Page & "Task Column" Login Modal <!-- id: 14 -->
+    - [ ] Create Main Dashboard Layout <!-- id: 15 -->
+    - [ ] Implement Kanban Board (Drag & Drop) <!-- id: 16 -->
+- [ ] Verification & Polish <!-- id: 17 -->
+    - [ ] Verify End-to-End Flow <!-- id: 18 -->
+    - [ ] Polish UI/UX (Animations, Styling) <!-- id: 19 -->

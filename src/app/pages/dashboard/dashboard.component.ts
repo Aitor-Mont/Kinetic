@@ -2,24 +2,28 @@ import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { SupabaseService } from '../../services/supabase.service';
+import { FormsModule } from '@angular/forms';
 
 interface Project {
     id: string;
     name: string;
     description: string;
-    createdAt: string;
+    created_at: string;
+    owner_id: string;
 }
 
 interface Board {
     id: string;
     name: string;
-    projectId: string;
+    project_id: string;
+    position: number;
 }
 
 @Component({
     selector: 'app-dashboard',
     standalone: true,
-    imports: [CommonModule],
+    imports: [CommonModule, FormsModule],
     templateUrl: './dashboard.component.html',
     styleUrl: './dashboard.component.css'
 })
@@ -30,39 +34,59 @@ export class DashboardComponent implements OnInit {
     showNewProjectModal = signal(false);
     showNewBoardModal = signal(false);
     sidebarCollapsed = signal(false);
+    currentUser = signal<any>(null);
 
-    // Demo data
-    demoProjects: Project[] = [
-        { id: '1', name: 'Proyecto Alpha', description: 'Desarrollo de nueva plataforma', createdAt: new Date().toISOString() },
-        { id: '2', name: 'Marketing Q1', description: 'Campañas de marketing primer trimestre', createdAt: new Date().toISOString() },
-        { id: '3', name: 'Producto Beta', description: 'Lanzamiento producto beta', createdAt: new Date().toISOString() },
-    ];
+    // Form data
+    newProject = { name: '', description: '' };
+    newBoard = { name: '' };
+    isLoading = signal(false);
 
-    demoBoards: Board[] = [
-        { id: '1', name: 'Sprint 1', projectId: '1' },
-        { id: '2', name: 'Backlog', projectId: '1' },
-        { id: '3', name: 'Campañas Digitales', projectId: '2' },
-    ];
+    constructor(private router: Router, private http: HttpClient, private supabaseService: SupabaseService) { }
 
-    constructor(private router: Router, private http: HttpClient) { }
+    async ngOnInit() {
+        const user = await this.supabaseService.getUser();
+        if (!user) {
+            this.router.navigate(['/']);
+            return;
+        }
+        this.currentUser.set(user);
+        await this.loadProjects();
+    }
 
-    ngOnInit() {
-        // Load demo data for now
-        this.projects.set(this.demoProjects);
-        this.boards.set(this.demoBoards);
-        if (this.demoProjects.length > 0) {
-            this.selectedProject.set(this.demoProjects[0]);
+    async loadProjects() {
+        const { data, error } = await this.supabaseService.getProjects();
+        if (error) {
+            console.error('Error loading projects:', error);
+            return;
+        }
+        if (data) {
+            this.projects.set(data as any);
+            if (data.length > 0 && !this.selectedProject()) {
+                this.selectProject(data[0] as any);
+            }
         }
     }
 
-    selectProject(project: Project) {
+    async selectProject(project: Project) {
         this.selectedProject.set(project);
+        await this.loadBoards(project.id);
+    }
+
+    async loadBoards(projectId: string) {
+        const { data, error } = await this.supabaseService.getBoards(projectId);
+        if (error) {
+            console.error('Error loading boards:', error);
+            return;
+        }
+        if (data) {
+            this.boards.set(data as any);
+        }
     }
 
     getProjectBoards() {
         const selected = this.selectedProject();
         if (!selected) return [];
-        return this.boards().filter(b => b.projectId === selected.id);
+        return this.boards().filter(b => b.project_id === selected.id);
     }
 
     openBoard(board: Board) {
@@ -73,7 +97,70 @@ export class DashboardComponent implements OnInit {
         this.sidebarCollapsed.update(v => !v);
     }
 
-    logout() {
+    async logout() {
+        await this.supabaseService.signOut();
         this.router.navigate(['/']);
+    }
+
+    // Project Modal
+    openNewProjectModal() {
+        this.newProject = { name: '', description: '' };
+        this.showNewProjectModal.set(true);
+    }
+
+    closeNewProjectModal() {
+        this.showNewProjectModal.set(false);
+    }
+
+    async createProject() {
+        if (!this.newProject.name) return;
+        this.isLoading.set(true);
+        const { data, error } = await this.supabaseService.createProject(
+            this.newProject.name,
+            this.newProject.description,
+            this.currentUser().id
+        );
+        this.isLoading.set(false);
+
+        if (error) {
+            alert('Error creating project');
+            console.error(error);
+        } else if (data) {
+            await this.loadProjects();
+            this.selectProject(data as any);
+            this.closeNewProjectModal();
+        }
+    }
+
+    // Board Modal
+    openNewBoardModal() {
+        const project = this.selectedProject();
+        if (!project) return;
+        this.newBoard = { name: '' };
+        this.showNewBoardModal.set(true);
+    }
+
+    closeNewBoardModal() {
+        this.showNewBoardModal.set(false);
+    }
+
+    async createBoard() {
+        const project = this.selectedProject();
+        if (!project || !this.newBoard.name) return;
+
+        this.isLoading.set(true);
+        const { data, error } = await this.supabaseService.createBoard(
+            this.newBoard.name,
+            project.id
+        );
+        this.isLoading.set(false);
+
+        if (error) {
+            alert('Error creating board');
+            console.error(error);
+        } else if (data) {
+            await this.loadBoards(project.id);
+            this.closeNewBoardModal();
+        }
     }
 }

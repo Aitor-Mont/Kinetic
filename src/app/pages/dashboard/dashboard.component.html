@@ -48,7 +48,7 @@
             }
 
             @if (!sidebarCollapsed()) {
-            <button
+            <button (click)="openNewProjectModal()"
                 class="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-dark-400 hover:text-kinetic-400 hover:bg-dark-800 transition-all duration-200 mt-6 border border-dashed border-dark-600/50 group">
                 <div
                     class="w-8 h-8 rounded-lg bg-dark-800 flex items-center justify-center group-hover:bg-kinetic-500/10 transition-colors">
@@ -71,8 +71,8 @@
                 </div>
                 @if (!sidebarCollapsed()) {
                 <div class="flex-1 min-w-0 animate-fade-in">
-                    <p class="text-white text-sm font-bold truncate">Juan Demo</p>
-                    <p class="text-dark-500 text-xs truncate">demo-user.kinetic.dev</p>
+                    <p class="text-white text-sm font-bold truncate">{{ currentUser()?.user_metadata?.full_name || currentUser()?.email }}</p>
+                    <p class="text-dark-500 text-xs truncate">{{ currentUser()?.email }}</p>
                 </div>
                 <button (click)="logout()"
                     class="p-2 text-dark-500 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-all">
@@ -123,7 +123,7 @@
                     Buscar
                 </button>
                 <div class="w-px h-6 bg-dark-700/50 mx-1"></div>
-                <button class="btn-primary !py-2 !px-5 text-sm">
+                <button (click)="openNewBoardModal()" class="btn-primary !py-2 !px-5 text-sm">
                     <span class="flex items-center gap-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -242,7 +242,7 @@
                         }
 
                         <!-- New Board -->
-                        <button
+                        <button (click)="openNewBoardModal()"
                             class="glass-card-dark p-8 border-2 border-dashed border-dark-700 flex flex-col items-center justify-center min-h-[200px] group hover:border-kinetic-500/50 transition-all">
                             <div
                                 class="w-14 h-14 rounded-full bg-dark-800 flex items-center justify-center mb-4 group-hover:bg-kinetic-500/10 transition-all">
@@ -280,3 +280,51 @@
         </div>
     </main>
 </div>
+
+<!-- New Project Modal -->
+@if (showNewProjectModal()) {
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4" (click)="closeNewProjectModal()">
+    <div class="absolute inset-0 bg-dark-950/80 backdrop-blur-sm animate-fade-in"></div>
+    <div class="relative w-full max-w-md glass-card-dark p-6 animate-slide-up" (click)="$event.stopPropagation()">
+        <h2 class="text-xl font-semibold text-white mb-6">Nuevo Proyecto</h2>
+        <div class="space-y-4">
+            <div>
+                <label class="block text-dark-300 text-sm font-medium mb-2">Nombre del Proyecto</label>
+                <input type="text" [(ngModel)]="newProject.name" class="input-field" placeholder="Ej. Desarrollo Web">
+            </div>
+            <div>
+                <label class="block text-dark-300 text-sm font-medium mb-2">Descripción</label>
+                <textarea [(ngModel)]="newProject.description" class="input-field resize-none" rows="3" placeholder="Breve descripción..."></textarea>
+            </div>
+            <div class="flex justify-end gap-3 pt-4">
+                <button (click)="closeNewProjectModal()" class="btn-secondary !py-2.5">Cancelar</button>
+                <button (click)="createProject()" class="btn-primary !py-2.5" [disabled]="isLoading() || !newProject.name">
+                    {{ isLoading() ? 'Creando...' : 'Crear Proyecto' }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+}
+
+<!-- New Board Modal -->
+@if (showNewBoardModal()) {
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4" (click)="closeNewBoardModal()">
+    <div class="absolute inset-0 bg-dark-950/80 backdrop-blur-sm animate-fade-in"></div>
+    <div class="relative w-full max-w-md glass-card-dark p-6 animate-slide-up" (click)="$event.stopPropagation()">
+        <h2 class="text-xl font-semibold text-white mb-6">Nuevo Tablero</h2>
+        <div class="space-y-4">
+            <div>
+                <label class="block text-dark-300 text-sm font-medium mb-2">Nombre del Tablero</label>
+                <input type="text" [(ngModel)]="newBoard.name" class="input-field" placeholder="Ej. Sprint 1">
+            </div>
+            <div class="flex justify-end gap-3 pt-4">
+                <button (click)="closeNewBoardModal()" class="btn-secondary !py-2.5">Cancelar</button>
+                <button (click)="createBoard()" class="btn-primary !py-2.5" [disabled]="isLoading() || !newBoard.name">
+                    {{ isLoading() ? 'Creando...' : 'Crear Tablero' }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+}

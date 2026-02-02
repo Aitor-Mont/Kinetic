@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CdkDragDrop, DragDropModule, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import { SupabaseService } from '../../services/supabase.service';
 
 interface Task {
     id: string;
@@ -12,6 +13,8 @@ interface Task {
     points?: number;
     assignee?: { name: string; avatar: string };
     dueDate?: string;
+    column_id?: string;
+    position?: number;
 }
 
 interface Column {
@@ -19,6 +22,8 @@ interface Column {
     name: string;
     tasks: Task[];
     color: string;
+    board_id?: string;
+    position?: number;
 }
 
 @Component({
@@ -30,7 +35,7 @@ interface Column {
 })
 export class BoardComponent implements OnInit {
     boardId = '';
-    boardName = signal('Sprint 1');
+    boardName = signal('Loading...');
     columns = signal<Column[]>([]);
     showTaskModal = signal(false);
     editingTask = signal<Task | null>(null);
@@ -44,69 +49,86 @@ export class BoardComponent implements OnInit {
         points: 0
     };
 
-    // Demo data
-    demoColumns: Column[] = [
-        {
-            id: '1',
-            name: 'Por Hacer',
-            color: 'text-dark-400 border-dark-500',
-            tasks: [
-                { id: '1', title: 'Diseñar nueva landing page', description: 'Crear mockups para la nueva landing', priority: 'HIGH', points: 5, assignee: { name: 'Ana G.', avatar: 'A' } },
-                { id: '2', title: 'Configurar CI/CD', description: 'Pipeline de integración continua', priority: 'MEDIUM', points: 8 },
-                { id: '3', title: 'Documentar API', description: 'Swagger/OpenAPI specs', priority: 'LOW', points: 3, assignee: { name: 'Carlos M.', avatar: 'C' } },
-            ]
-        },
-        {
-            id: '2',
-            name: 'En Progreso',
-            color: 'text-kinetic-400 border-kinetic-500',
-            tasks: [
-                { id: '4', title: 'Implementar autenticación', description: 'JWT + Refresh tokens', priority: 'CRITICAL', points: 13, assignee: { name: 'Luis R.', avatar: 'L' }, dueDate: '2026-02-01' },
-                { id: '5', title: 'Tests unitarios', description: 'Cobertura mínima 80%', priority: 'HIGH', points: 8, assignee: { name: 'María P.', avatar: 'M' } },
-            ]
-        },
-        {
-            id: '3',
-            name: 'En Revisión',
-            color: 'text-amber-400 border-amber-500',
-            tasks: [
-                { id: '6', title: 'Optimizar queries', description: 'N+1 y caché Redis', priority: 'MEDIUM', points: 5, assignee: { name: 'Pablo S.', avatar: 'P' } },
-            ]
-        },
-        {
-            id: '4',
-            name: 'Completado',
-            color: 'text-emerald-400 border-emerald-500',
-            tasks: [
-                { id: '7', title: 'Setup proyecto Angular', description: 'Estructura inicial', priority: 'MEDIUM', points: 2, assignee: { name: 'Ana G.', avatar: 'A' } },
-                { id: '8', title: 'Definir esquema DB', description: 'PostgreSQL + Supabase', priority: 'HIGH', points: 3, assignee: { name: 'Luis R.', avatar: 'L' } },
-            ]
-        }
-    ];
+    constructor(private route: ActivatedRoute, private router: Router, private supabaseService: SupabaseService) { }
 
-    constructor(private route: ActivatedRoute, private router: Router) { }
-
-    ngOnInit() {
+    async ngOnInit() {
         this.boardId = this.route.snapshot.params['id'];
-        this.columns.set(this.demoColumns);
+        // Ideally fetch board details to set name, but for now just load columns
+        await this.loadBoardData();
+    }
+
+    async loadBoardData() {
+        // Fetch board details
+        const { data: boardData, error: boardError } = await this.supabaseService.getBoard(this.boardId);
+        if (boardError) {
+            console.error('Error loading board:', boardError);
+        } else if (boardData) {
+            this.boardName.set((boardData as any).name);
+        }
+
+        const { data, error } = await this.supabaseService.getColumns(this.boardId);
+        if (error) {
+            console.error('Error loading board data:', error);
+            return;
+        }
+        if (data) {
+            // Transform data to match Column interface if needed, although Supabase returns tasks included
+            const cols = data.map((col: any) => ({
+                id: col.id,
+                name: col.name,
+                color: this.getColumnColor(col.name), // Helper to keep colors consistent if stored in DB or inferred
+                tasks: col.tasks || [],
+                board_id: col.board_id,
+                position: col.position
+            }));
+            this.columns.set(cols);
+        }
+    }
+
+    getColumnColor(name: string): string {
+        switch (name.toLowerCase()) {
+            case 'por hacer': return 'text-dark-400 border-dark-500';
+            case 'en progreso': return 'text-kinetic-400 border-kinetic-500';
+            case 'en revisión': return 'text-amber-400 border-amber-500';
+            case 'completado': return 'text-emerald-400 border-emerald-500';
+            default: return 'text-dark-400 border-dark-500';
+        }
     }
 
     getColumnIds(): string[] {
         return this.columns().map(c => c.id);
     }
 
-    drop(event: CdkDragDrop<Task[]>) {
+    async drop(event: CdkDragDrop<Task[]>) {
         if (event.previousContainer === event.container) {
             moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+            // Reorder within same column
+            // For true persistence, we need to update positions of all affected items.
+            // Simplified: Update the moved item's position based on index (assuming index maps roughly to position)
+            // Real implementation often requires batch updates or linked list logic. 
+            // For this scope, let's just update the moved item if possible or accept UI optimistic update.
+            // Let's at least try updating the moved item's position if we can calculate it.
+            const task = event.container.data[event.currentIndex];
+            // Update supabase? 
+            // Updating purely position in same column is tricky without updating others.
+            // Skipping complex reorder logic to keep implementation simple as requested, but doing column change logic below.
         } else {
+            const task = event.previousContainer.data[event.previousIndex];
             transferArrayItem(
                 event.previousContainer.data,
                 event.container.data,
                 event.previousIndex,
                 event.currentIndex
             );
+
+            // Update task column in Supabase
+            // container.id is expected to be the column ID string (ensure HTML binds [id]="column.id")
+            const newColumnId = event.container.id;
+
+            // Calculate new position estimate (e.g. at end or start, simple approach)
+            // Or just update column_id
+            await this.supabaseService.moveTask(task.id, newColumnId, event.currentIndex); // Using index as simple position proxy
         }
-        // Here you would call the API to persist the change
     }
 
     getPriorityClass(priority: Task['priority']): string {
@@ -160,7 +182,7 @@ export class BoardComponent implements OnInit {
         };
     }
 
-    saveTask() {
+    async saveTask() {
         const column = this.selectedColumn();
         if (!column) return;
 
@@ -168,35 +190,53 @@ export class BoardComponent implements OnInit {
 
         if (editing) {
             // Update existing task
-            const taskIndex = column.tasks.findIndex(t => t.id === editing.id);
-            if (taskIndex !== -1) {
-                column.tasks[taskIndex] = {
-                    ...editing,
-                    title: this.newTask.title,
-                    description: this.newTask.description,
-                    priority: this.newTask.priority,
-                    points: this.newTask.points
-                };
-            }
-        } else {
-            // Create new task
-            const newTask: Task = {
-                id: Date.now().toString(),
+            const updates = {
                 title: this.newTask.title,
                 description: this.newTask.description,
                 priority: this.newTask.priority,
                 points: this.newTask.points
             };
-            column.tasks.push(newTask);
+
+            const { data, error } = await this.supabaseService.updateTask(editing.id, updates);
+
+            if (!error && data) {
+                // Optimistic UI update
+                const taskIndex = column.tasks.findIndex(t => t.id === editing.id);
+                if (taskIndex !== -1) {
+                    column.tasks[taskIndex] = { ...editing, ...updates };
+                }
+            }
+        } else {
+            // Create new task
+            const newTaskPayload = {
+                column_id: column.id,
+                title: this.newTask.title,
+                description: this.newTask.description,
+                priority: this.newTask.priority,
+                points: this.newTask.points,
+                // assignee_id: current user?
+            };
+
+            const { data, error } = await this.supabaseService.createTask(newTaskPayload);
+
+            if (!error && data) {
+                column.tasks.push(data as Task);
+            }
         }
 
         this.closeTaskModal();
     }
 
-    deleteTask(task: Task, column: Column) {
-        const index = column.tasks.findIndex(t => t.id === task.id);
-        if (index !== -1) {
-            column.tasks.splice(index, 1);
+    async deleteTask(task: Task, column: Column) {
+        if (!confirm('¿Estás seguro de eliminar esta tarea?')) return;
+
+        const { error } = await this.supabaseService.deleteTask(task.id);
+
+        if (!error) {
+            const index = column.tasks.findIndex(t => t.id === task.id);
+            if (index !== -1) {
+                column.tasks.splice(index, 1);
+            }
         }
     }
 
